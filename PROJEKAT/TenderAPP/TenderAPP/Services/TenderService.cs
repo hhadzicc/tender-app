@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TenderiApp.Interfaces;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
 
 namespace TenderiApp.Services
 {
-    public class TenderService
+    public class TenderService : ITenderService
     {
         private List<Tender> tenderi;
         private int nextId;

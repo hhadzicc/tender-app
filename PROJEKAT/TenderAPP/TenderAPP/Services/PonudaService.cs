@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
+using TenderiApp.Interfaces;
 
 namespace TenderiApp.Services
 {
-    public class PonudaService
+    public class PonudaService : IPonudaService
     {
         private List<Ponuda> ponude;
         private int nextId;

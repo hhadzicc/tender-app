@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
+using TenderiApp.Interfaces;
 
 namespace TenderiApp.Services
 {
-    public class IzvjestajService
+    public class IzvjestajService : IIzvjestajService
     {
         public IzvjestajService()
         {

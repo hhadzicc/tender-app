@@ -5,15 +5,16 @@ using TenderiApp.Services;
 using TenderiApp.Controllers;
 using TenderiApp.Views;
 using TenderiApp.Exceptions;
+using TenderiApp.Interfaces;
 
 namespace TenderiApp
 {
     class Program
     {
-        private static TenderService tenderService = new TenderService();
-        private static PonudaService ponudaService = new PonudaService();
-        private static EvaluacijaService evaluacijaService = new EvaluacijaService();
-        private static IzvjestajService izvjestajService = new IzvjestajService();
+        private static ITenderService tenderService = new TenderService();
+        private static IPonudaService ponudaService = new PonudaService();
+        private static IEvaluacijaService evaluacijaService = new EvaluacijaService();
+        private static IIzvjestajService izvjestajService = new IzvjestajService();
 
         private static TenderController tenderController = new TenderController(tenderService, evaluacijaService);
         private static PonudaController ponudaController = new PonudaController(ponudaService, tenderService);

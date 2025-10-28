@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using TenderiApp.Models;
 using TenderiApp.Services;
 using TenderiApp.Exceptions;
+using TenderiApp.Interfaces;
 
 namespace TenderiApp.Controllers
 {
     public class TenderController
     {
-        private readonly TenderService tenderService;
-        private readonly EvaluacijaService evaluacijaService;
+        private readonly ITenderService tenderService;
+        private readonly IEvaluacijaService evaluacijaService;
 
-        public TenderController(TenderService tenderService, EvaluacijaService evaluacijaService)
+        public TenderController(ITenderService tenderService, IEvaluacijaService evaluacijaService)
         {
             this.tenderService = tenderService ?? throw new ArgumentNullException(nameof(tenderService));
             this.evaluacijaService = evaluacijaService ?? throw new ArgumentNullException(nameof(evaluacijaService));
