@@ -1,0 +1,35 @@
+[
+    {
+        "MinimalnaCijena": 10000,
+        "MaksimalnaCijena": 50000,
+        "MaksimalanRok": 90,
+        "MinimalnaGarancija": 12,
+        "MinimalanKvalitet": 60,
+        "PonderCijene": 0.4,
+        "PonderRoka": 0.3,
+        "PonderGarancije": 0.15,
+        "PonderKvaliteta": 0.15
+    },
+    {
+        "MinimalnaCijena": 5000,
+        "MaksimalnaCijena": 20000,
+        "MaksimalanRok": 60,
+        "MinimalnaGarancija": 6,
+        "MinimalanKvalitet": 50,
+        "PonderCijene": 0.5,
+        "PonderRoka": 0.2,
+        "PonderGarancije": 0.2,
+        "PonderKvaliteta": 0.1
+    },
+    {
+        "MinimalnaCijena": 20000,
+        "MaksimalnaCijena": 100000,
+        "MaksimalanRok": 120,
+        "MinimalnaGarancija": 24,
+        "MinimalanKvalitet": 70,
+        "PonderCijene": 0.35,
+        "PonderRoka": 0.25,
+        "PonderGarancije": 0.25,
+        "PonderKvaliteta": 0.15
+    }
+]
