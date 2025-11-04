@@ -50,14 +50,10 @@ namespace TenderiApp.Services
         public double IzracunajSkor(Ponuda ponuda, KriterijiTendera kriteriji)
         {
             if (ponuda == null)
-            {
                 throw new ArgumentNullException(nameof(ponuda));
-            }
 
             if (kriteriji == null)
-            {
                 throw new ArgumentNullException(nameof(kriteriji));
-            }
 
             if (!ponuda.JeValidna)
             {
@@ -65,16 +61,79 @@ namespace TenderiApp.Services
                 return 0;
             }
 
-            double skorCijene = IzracunajSkorCijene(ponuda.Cijena, kriteriji);
-            double skorRoka = IzracunajSkorRoka(ponuda.RokIsporuke, kriteriji);
-            double skorGarancije = IzracunajSkorGarancije(ponuda.Garancija, kriteriji);
-            double skorKvaliteta = IzracunajSkorKvaliteta(ponuda.Kvalitet);
+            // INLINE kod iz IzracunajSkorCijene()
+            // double skorCijene = IzracunajSkorCijene(ponuda.Cijena, kriteriji); // Zakomentirano
+            double skorCijene;
+            double rasponCijene = kriteriji.MaksimalnaCijena - kriteriji.MinimalnaCijena;
+
+            if (rasponCijene <= 0)
+            {
+                skorCijene = 100;
+            }
+            else
+            {
+                double normalizovanaCijena = (ponuda.Cijena - kriteriji.MinimalnaCijena) / rasponCijene;
+
+                if (normalizovanaCijena < 0)
+                    normalizovanaCijena = 0;
+                else if (normalizovanaCijena > 1)
+                    normalizovanaCijena = 1;
+
+                skorCijene = (1 - normalizovanaCijena) * 100;
+            }
+
+            // INLINE kod iz IzracunajSkorRoka()
+            // double skorRoka = IzracunajSkorRoka(ponuda.RokIsporuke, kriteriji); // Zakomentirano
+            double skorRoka;
+            if (kriteriji.MaksimalanRok <= 0)
+            {
+                skorRoka = 100;
+            }
+            else
+            {
+                double normalizovanRok = (double)ponuda.RokIsporuke / kriteriji.MaksimalanRok;
+
+                if (normalizovanRok < 0)
+                    normalizovanRok = 0;
+                else if (normalizovanRok > 1)
+                    normalizovanRok = 1;
+
+                skorRoka = (1 - normalizovanRok) * 100;
+            }
+
+            // INLINE kod iz IzracunajSkorGarancije()
+            // double skorGarancije = IzracunajSkorGarancije(ponuda.Garancija, kriteriji); // Zakomentirano
+            double skorGarancije;
+            if (kriteriji.MinimalnaGarancija <= 0)
+            {
+                skorGarancije = ponuda.Garancija > 0 ? 100 : 0;
+            }
+            else
+            {
+                double ratio = (double)ponuda.Garancija / kriteriji.MinimalnaGarancija;
+
+                if (ratio > 2.0)
+                {
+                    ratio = 2.0;
+                }
+
+                skorGarancije = ratio * 50;
+            }
+
+            // INLINE kod iz IzracunajSkorKvaliteta()
+            // double skorKvaliteta = IzracunajSkorKvaliteta(ponuda.Kvalitet); // Zakomentirano
+            double skorKvaliteta;
+            if (ponuda.Kvalitet < 0)
+                skorKvaliteta = 0;
+            else if (ponuda.Kvalitet > 100)
+                skorKvaliteta = 100;
+            else
+                skorKvaliteta = ponuda.Kvalitet;
 
             double ukupanSkor = (skorCijene * kriteriji.Ponderi.PonderCijene) +
                                (skorRoka * kriteriji.Ponderi.PonderRoka) +
                                (skorGarancije * kriteriji.Ponderi.PonderGarancije) +
                                (skorKvaliteta * kriteriji.Ponderi.PonderKvaliteta);
-
             ponuda.UkupanSkor = ukupanSkor;
             return ukupanSkor;
         }
