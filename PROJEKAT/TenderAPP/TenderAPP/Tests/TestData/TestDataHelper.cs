@@ -11,6 +11,10 @@ namespace TenderiApp.Tests.TestData
         public static IEnumerable<object[]> GetPonudeFromCsv()
         {
             var csvPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "ponude.csv");
+            if (!File.Exists(csvPath))
+            {
+                throw new FileNotFoundException($"CSV fajl ne postoji: {csvPath}");
+            }
             var lines = File.ReadAllLines(csvPath).Skip(1); // Skip header
 
             foreach (var line in lines)

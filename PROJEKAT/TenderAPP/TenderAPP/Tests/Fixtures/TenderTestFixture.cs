@@ -40,6 +40,19 @@ namespace TenderiApp.Tests.Fixtures
             DefaultPonudjac.Id = 1;
         }
 
+        public Tender CreateOpenTender()
+        {
+            return new Tender(
+                "Test Tender",
+                "Opis",
+                DateTime.Now.AddDays(30),
+                DefaultKriteriji
+            )
+            {
+                Id = new Random().Next(1, 1000)
+            };
+        }
+
         public void Dispose()
         {
             // Cleanup ako treba

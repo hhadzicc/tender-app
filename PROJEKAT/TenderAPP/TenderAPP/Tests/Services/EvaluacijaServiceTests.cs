@@ -214,7 +214,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
             var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
             ponuda.JeValidna = false;
@@ -246,7 +246,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
             var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
 
@@ -266,7 +266,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -308,7 +308,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             var ponudjac = _fixture.DefaultPonudjac;
             var ponuda = new Ponuda(tender, ponudjac, 60000, 45, 24, 85); // Nevalidna
@@ -347,7 +347,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -384,7 +384,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             // Act & Assert
             var exception = Assert.Throws<TenderException>(() =>
@@ -403,7 +403,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new EvaluacijaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
