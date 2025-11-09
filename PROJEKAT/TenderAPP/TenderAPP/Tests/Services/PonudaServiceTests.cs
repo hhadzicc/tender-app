@@ -25,7 +25,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
 
             // Act
@@ -44,7 +44,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
 
             // Act
@@ -60,7 +60,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
 
             // Act
@@ -90,7 +90,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
@@ -104,7 +104,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             var ponudjac2 = _fixture.DefaultPonudjac;
 
@@ -125,7 +125,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
 
             service.PrijaviPonudu(tender, ponudjac, 35000, 45, 24, 85);
@@ -147,7 +147,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
             var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
 
@@ -165,7 +165,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac = _fixture.DefaultPonudjac;
             var ponuda = new Ponuda(tender, ponudjac, 60000, 45, 24, 85); // Nevalidna
 
@@ -235,7 +235,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -257,7 +257,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender1 = _fixture.DefaultTender;
+            var tender1 = _fixture.CreateOpenTender();
             var tender2 = new Tender("Tender 2", "Opis 2", DateTime.Now.AddDays(30), _fixture.DefaultKriteriji);
             tender2.Id = 2;
 
@@ -283,7 +283,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -309,7 +309,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -335,7 +335,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -361,7 +361,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");
@@ -387,7 +387,7 @@ namespace TenderiApp.Tests.Services
         {
             // Arrange
             var service = new PonudaService();
-            var tender = _fixture.DefaultTender;
+            var tender = _fixture.CreateOpenTender();
             var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "123");
             ponudjac1.Id = 1;
             var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "456");

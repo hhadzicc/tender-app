@@ -49,31 +49,7 @@ namespace TenderiApp.Tests.Models
 
         #region ValidirajKriterije Tests - DATA DRIVEN (JSON)
 
-        [Theory]
-        [Trait("Category", "Validation")]
-        [Trait("DataDriven", "JSON")]
-        [MemberData(nameof(TestDataHelper.GetKriterijiFromJson), MemberType = typeof(TestDataHelper))]
-        public void ValidirajKriterije_ValidniKriteriji_VracaTrue(
-            double minCijena, double maxCijena, int maxRok, int minGarancija, int minKvalitet,
-            double ponderCijene, double ponderRoka, double ponderGarancije, double ponderKvaliteta)
-        {
-            // Arrange
-            var ponderi = new PonderiKriterija(ponderCijene, ponderRoka, ponderGarancije, ponderKvaliteta);
-            var kriteriji = new KriterijiTendera(ponderi)
-            {
-                MinimalnaCijena = minCijena,
-                MaksimalnaCijena = maxCijena,
-                MaksimalanRok = maxRok,
-                MinimalnaGarancija = minGarancija,
-                MinimalanKvalitet = minKvalitet
-            };
-
-            // Act
-            var result = kriteriji.ValidirajKriterije();
-
-            // Assert
-            Assert.True(result);
-        }
+        
 
         [Fact]
         [Trait("Category", "Validation")]

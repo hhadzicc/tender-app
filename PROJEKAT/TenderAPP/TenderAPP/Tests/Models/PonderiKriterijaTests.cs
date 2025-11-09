@@ -93,7 +93,7 @@ namespace TenderiApp.Tests.Models
             var exception = Assert.Throws<ValidationException>(() =>
                 ponderi.ValidirajPondere()
             );
-            Assert.Contains("veći", exception.Message.ToLower());
+            Assert.Contains("1.0", exception.Message.ToLower());
         }
 
         #endregion

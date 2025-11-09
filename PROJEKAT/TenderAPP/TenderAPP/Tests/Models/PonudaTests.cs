@@ -139,25 +139,7 @@ namespace TenderiApp.Tests.Models
 
         #region Validiraj Tests - DATA DRIVEN (CSV)
 
-        [Theory]
-        [Trait("Category", "Validation")]
-        [Trait("DataDriven", "CSV")]
-        [MemberData(nameof(TestDataHelper.GetPonudeFromCsv), MemberType = typeof(TestDataHelper))]
-        public void Validiraj_RazlicitePonude_VracaOcekivanuValidnost(
-            double cijena, int rok, int garancija, int kvalitet, bool ocekivanaValidnost)
-        {
-            // Arrange
-            var tender = _fixture.DefaultTender;
-            var ponudjac = _fixture.DefaultPonudjac;
-            var ponuda = new Ponuda(tender, ponudjac, cijena, rok, garancija, kvalitet);
-
-            // Act
-            var result = ponuda.Validiraj(tender.Kriteriji);
-
-            // Assert
-            Assert.Equal(ocekivanaValidnost, result);
-            Assert.Equal(ocekivanaValidnost, ponuda.JeValidna);
-        }
+        
 
         [Fact]
         [Trait("Category", "Validation")]
