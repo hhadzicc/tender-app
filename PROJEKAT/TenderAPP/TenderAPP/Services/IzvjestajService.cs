@@ -36,9 +36,7 @@ namespace TenderiApp.Services
         public string GenerisiDetaljanIzvjestaj(Tender tender)
         {
             if (tender == null)
-            {
                 throw new ArgumentNullException(nameof(tender));
-            }
 
             StringBuilder sb = new StringBuilder();
 
@@ -51,13 +49,50 @@ namespace TenderiApp.Services
             sb.AppendLine($"Opis: {tender.Opis}");
             sb.AppendLine($"Datum kreiranja: {tender.DatumKreiranja:dd.MM.yyyy HH:mm}");
             sb.AppendLine($"Rok za prijavu: {tender.RokZaPrijavu:dd.MM.yyyy HH:mm}");
-            sb.AppendLine($"Status: {tender.Status}");
+
+            // DODAJ GRANANJA - inline logika
+            if (tender.Status == StatusTendera.Otvoren)
+            {
+                sb.AppendLine($"Status: {tender.Status} ⏳");
+            }
+            else if (tender.Status == StatusTendera.Zatvoren)
+            {
+                sb.AppendLine($"Status: {tender.Status} 🔒");
+            }
+            else if (tender.Status == StatusTendera.Evaluiran)
+            {
+                sb.AppendLine($"Status: {tender.Status} 📊");
+            }
+            else if (tender.Status == StatusTendera.Zavrsen)
+            {
+                sb.AppendLine($"Status: {tender.Status} ✅");
+            }
+            else
+            {
+                sb.AppendLine($"Status: {tender.Status}");
+            }
+
             sb.AppendLine();
 
             sb.AppendLine("─────────────────────────────────────────────────────────────────────────");
             sb.AppendLine("KRITERIJI TENDERA:");
             sb.AppendLine("─────────────────────────────────────────────────────────────────────────");
-            sb.AppendLine($"  Cijena: {tender.Kriteriji.MinimalnaCijena:F2} - {tender.Kriteriji.MaksimalnaCijena:F2} KM");
+
+            // DODAJ GRANANJA - analiza raspona cijene
+            double rasponCijene = tender.Kriteriji.MaksimalnaCijena - tender.Kriteriji.MinimalnaCijena;
+            if (rasponCijene < 10000)
+            {
+                sb.AppendLine($"  Cijena: {tender.Kriteriji.MinimalnaCijena:F2} - {tender.Kriteriji.MaksimalnaCijena:F2} KM (Uzak raspon)");
+            }
+            else if (rasponCijene < 50000)
+            {
+                sb.AppendLine($"  Cijena: {tender.Kriteriji.MinimalnaCijena:F2} - {tender.Kriteriji.MaksimalnaCijena:F2} KM (Srednji raspon)");
+            }
+            else
+            {
+                sb.AppendLine($"  Cijena: {tender.Kriteriji.MinimalnaCijena:F2} - {tender.Kriteriji.MaksimalnaCijena:F2} KM (Širok raspon)");
+            }
+
             sb.AppendLine($"  Maksimalan rok isporuke: {tender.Kriteriji.MaksimalanRok} dana");
             sb.AppendLine($"  Minimalna garancija: {tender.Kriteriji.MinimalnaGarancija} mjeseci");
             sb.AppendLine($"  Minimalan kvalitet: {tender.Kriteriji.MinimalanKvalitet}/100");
@@ -97,7 +132,24 @@ namespace TenderiApp.Services
                         sb.AppendLine($"      Garancija: {ponuda.Garancija} mjeseci");
                         sb.AppendLine($"      Kvalitet: {ponuda.Kvalitet}/100");
                         sb.AppendLine($"      Datum prijave: {ponuda.DatumPrijave:dd.MM.yyyy HH:mm}");
-                        sb.AppendLine($"      ★ UKUPAN SKOR: {ponuda.UkupanSkor:F2}");
+
+                        // DODAJ GRANANJA - analiza skora
+                        if (ponuda.UkupanSkor >= 90)
+                        {
+                            sb.AppendLine($"      ★ UKUPAN SKOR: {ponuda.UkupanSkor:F2} (Odličan)");
+                        }
+                        else if (ponuda.UkupanSkor >= 75)
+                        {
+                            sb.AppendLine($"      ★ UKUPAN SKOR: {ponuda.UkupanSkor:F2} (Vrlo dobar)");
+                        }
+                        else if (ponuda.UkupanSkor >= 60)
+                        {
+                            sb.AppendLine($"      ★ UKUPAN SKOR: {ponuda.UkupanSkor:F2} (Dobar)");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"      ★ UKUPAN SKOR: {ponuda.UkupanSkor:F2} (Prihvatljiv)");
+                        }
 
                         if (i == 0)
                         {
@@ -121,7 +173,29 @@ namespace TenderiApp.Services
                         sb.AppendLine($"      Rok isporuke: {ponuda.RokIsporuke} dana");
                         sb.AppendLine($"      Garancija: {ponuda.Garancija} mjeseci");
                         sb.AppendLine($"      Kvalitet: {ponuda.Kvalitet}/100");
-                        sb.AppendLine($"      Razlog: Ne zadovoljava kriterije tendera");
+
+                        // DODAJ GRANANJA - razlozi nevalidnosti
+                        if (ponuda.Cijena < tender.Kriteriji.MinimalnaCijena || ponuda.Cijena > tender.Kriteriji.MaksimalnaCijena)
+                        {
+                            sb.AppendLine($"      Razlog: Cijena van dozvoljenog raspona");
+                        }
+                        else if (ponuda.RokIsporuke > tender.Kriteriji.MaksimalanRok)
+                        {
+                            sb.AppendLine($"      Razlog: Rok isporuke prekoračuje maksimum");
+                        }
+                        else if (ponuda.Garancija < tender.Kriteriji.MinimalnaGarancija)
+                        {
+                            sb.AppendLine($"      Razlog: Garancija ispod minimuma");
+                        }
+                        else if (ponuda.Kvalitet < tender.Kriteriji.MinimalanKvalitet)
+                        {
+                            sb.AppendLine($"      Razlog: Kvalitet ispod minimuma");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"      Razlog: Ne zadovoljava kriterije tendera");
+                        }
+
                         sb.AppendLine();
                     }
                 }

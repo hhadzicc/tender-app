@@ -50,13 +50,46 @@ namespace TenderiApp.Services
                 Id = nextId++
             };
 
-            bool validna = ValidirajPonudu(ponuda, tender.Kriteriji);
+            // INLINE kod iz ValidirajPonudu()
+            // bool validna = ValidirajPonudu(ponuda, tender.Kriteriji); // Zakomentirano
+
+            // Validacija ponude - inline kod
+            bool validna = true;
+
+            if (ponuda.Cijena < tender.Kriteriji.MinimalnaCijena)
+            {
+                validna = false;
+            }
+
+            if (ponuda.Cijena > tender.Kriteriji.MaksimalnaCijena)
+            {
+                validna = false;
+            }
+
+            if (ponuda.RokIsporuke > tender.Kriteriji.MaksimalanRok)
+            {
+                validna = false;
+            }
+
+            if (ponuda.Garancija < tender.Kriteriji.MinimalnaGarancija)
+            {
+                validna = false;
+            }
+
+            if (ponuda.Kvalitet < tender.Kriteriji.MinimalanKvalitet)
+            {
+                validna = false;
+            }
+
+            ponuda.JeValidna = validna;
 
             ponude.Add(ponuda);
             tender.DodajPonudu(ponuda);
 
             return ponuda;
         }
+
+        
 
         public bool ValidirajPonudu(Ponuda ponuda, KriterijiTendera kriteriji)
         {
