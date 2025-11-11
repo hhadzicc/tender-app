@@ -4,9 +4,11 @@ using TenderiApp.Models;
 using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
 using TenderiApp.Tests.TestData;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Tests.Models
 {
+    [ExcludeFromCodeCoverage]
     public class KriterijiTenderaTests : IClassFixture<TenderTestFixture>
     {
         private readonly TenderTestFixture _fixture;

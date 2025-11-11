@@ -5,9 +5,11 @@ using TenderiApp.Models;
 using TenderiApp.Services;
 using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Tests.Services
 {
+    [ExcludeFromCodeCoverage]
     public class PonudaServiceTests : IClassFixture<TenderTestFixture>
     {
         private readonly TenderTestFixture _fixture;

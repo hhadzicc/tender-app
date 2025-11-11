@@ -3,9 +3,11 @@ using Xunit;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Tests.Models
 {
+    [ExcludeFromCodeCoverage]
     public class TenderTests : IClassFixture<TenderTestFixture>
     {
         private readonly TenderTestFixture _fixture;

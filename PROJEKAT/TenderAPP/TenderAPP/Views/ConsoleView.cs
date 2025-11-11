@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Views
 {
+    /// <summary>
+    /// UI layer – interakcija s korisnikom (Console I/O).
+    /// Isključeno iz code coverage-a jer je logika u servisima (Service Layer).
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ConsoleView
     {
         public void PrikaziNaslov(string naslov)

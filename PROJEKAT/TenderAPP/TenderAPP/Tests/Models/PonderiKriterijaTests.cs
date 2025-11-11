@@ -1,9 +1,11 @@
 ﻿using Xunit;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Tests.Models
 {
+    [ExcludeFromCodeCoverage]
     public class PonderiKriterijaTests
     {
         #region Constructor Tests
