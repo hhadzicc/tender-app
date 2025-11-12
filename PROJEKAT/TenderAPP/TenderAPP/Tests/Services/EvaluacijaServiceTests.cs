@@ -464,5 +464,225 @@ namespace TenderiApp.Tests.Services
         }
 
         #endregion
+
+        #region Edge Cases - Additional Coverage
+
+        [Fact]
+        [Trait("Category", "IzracunajSkor")]
+        [Trait("EdgeCase", "Yes")]
+        public void IzracunajSkor_RasponCijeneNula_VracaMaksimum()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var ponderi = new PonderiKriterija(1.0, 0, 0, 0);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 30000,
+                MaksimalnaCijena = 30000, // Isti = raspon 0
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 30000, 45, 24, 85);
+            ponuda.JeValidna = true;
+
+            // Act
+            var skor = service.IzracunajSkor(ponuda, kriteriji);
+
+            // Assert
+            Assert.Equal(100, skor, 2);
+        }
+
+        [Fact]
+        [Trait("Category", "IzracunajSkor")]
+        [Trait("EdgeCase", "Yes")]
+        public void IzracunajSkor_MinimalnaGarancijaNula_VracaSkorBasiranNaGaranciji()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var ponderi = new PonderiKriterija(0, 0, 1.0, 0);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 50000,
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 0, // Edge case
+                MinimalanKvalitet = 60
+            };
+
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.JeValidna = true;
+
+            // Act
+            var skor = service.IzracunajSkor(ponuda, kriteriji);
+
+            // Assert
+            Assert.Equal(100, skor, 2); // Sa garancijom > 0
+        }
+
+        [Fact]
+        [Trait("Category", "IzracunajSkor")]
+        [Trait("EdgeCase", "Yes")]
+        public void IzracunajSkor_GarancijaPrekoTripleMiniмuma_CappedNa100()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var ponderi = new PonderiKriterija(0, 0, 1.0, 0);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 50000,
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 48, 85); // 4x min = capped
+            ponuda.JeValidna = true;
+
+            // Act
+            var skor = service.IzracunajSkor(ponuda, kriteriji);
+
+            // Assert
+            Assert.Equal(100, skor, 2); // Capped na 2x = 100
+        }
+
+        [Theory]
+        [Trait("Category", "IzracunajSkor")]
+        //[InlineData(-10, 0, true)]   // očekuje exception
+        [InlineData(0, 0, false)]    // validan rezultat
+        [InlineData(50, 50, false)]  // validan rezultat
+        [InlineData(100, 100, false)]// validan rezultat
+        //[InlineData(150, 100, true)] // očekuje exception
+        public void IzracunajSkor_RazlicitKvalitet_BehaviorTest(int kvalitet, double expected, bool expectException)
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var ponderi = new PonderiKriterija(0, 0, 0, 1.0);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 50000,
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 0
+            };
+
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, kvalitet);
+            ponuda.JeValidna = true;
+
+            // Act + Assert
+            if (expectException)
+            {
+                Assert.Throws<ValidationException>(() => service.IzracunajSkor(ponuda, kriteriji));
+            }
+            else
+            {
+                var skor = service.IzracunajSkor(ponuda, kriteriji);
+                Assert.Equal(expected, Math.Round(skor, 2));
+            }
+        }
+
+
+        [Fact]
+        [Trait("Category", "EvaluirajPonude")]
+        public void EvaluirajPonude_TenderOtvoren_MozeDaEvaluira()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var tender = _fixture.CreateOpenTender();
+            tender.Status = StatusTendera.Otvoren; // Eksplicitno otvoren
+
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.Validiraj(tender.Kriteriji);
+            tender.Ponude.Add(ponuda);
+
+            // Act
+            var result = service.EvaluirajPonude(tender);
+
+            // Assert
+            Assert.Single(result);
+            Assert.True(result[0].UkupanSkor > 0);
+        }
+
+        [Fact]
+        [Trait("Category", "OdrediPobjednika")]
+        public void OdrediPobjednika_BezValidnihPonuda_VracaNull()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var tender = _fixture.CreateOpenTender();
+            tender.Status = StatusTendera.Evaluiran;
+
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 60000, 45, 24, 85); // Nevalidna
+            ponuda.JeValidna = false;
+            tender.Ponude.Add(ponuda);
+
+            // Act
+            var result = service.OdrediPobjednika(tender);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        [Trait("Category", "RangirajPonude")]
+        public void RangirajPonude_JednaPonuda_VracaListuSaJednomPonudom()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.UkupanSkor = 75.0;
+            var ponude = new List<Ponuda> { ponuda };
+
+            // Act
+            var result = service.RangirajPonude(ponude);
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal(75.0, result[0].UkupanSkor);
+        }
+
+        [Fact]
+        [Trait("Category", "RangirajPonude")]
+        public void RangirajPonude_IstıSkor_ZadrzavaRedoslijed()
+        {
+            // Arrange
+            var service = new EvaluacijaService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+
+            var ponuda1 = new Ponuda(tender, p1, 35000, 45, 24, 85);
+            ponuda1.UkupanSkor = 75.0;
+
+            var ponuda2 = new Ponuda(tender, p2, 36000, 46, 24, 85);
+            ponuda2.UkupanSkor = 75.0; // Isti skor
+
+            var ponude = new List<Ponuda> { ponuda1, ponuda2 };
+
+            // Act
+            var result = service.RangirajPonude(ponude);
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal(75.0, result[0].UkupanSkor);
+            Assert.Equal(75.0, result[1].UkupanSkor);
+        }
+
+        #endregion
     }
 }

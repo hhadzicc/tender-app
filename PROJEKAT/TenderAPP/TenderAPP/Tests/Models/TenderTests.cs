@@ -217,5 +217,69 @@ namespace TenderiApp.Tests.Models
         }
 
         #endregion
+
+        #region Additional Coverage Tests
+
+        [Fact]
+        [Trait("Category", "ZatvoriTender")]
+        public void ZatvoriTender_VecZatvoren_BacaTenderException()
+        {
+            // Arrange
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.Validiraj(tender.Kriteriji);
+            tender.DodajPonudu(ponuda);
+            tender.ZatvoriTender(); // Zatvori prvi put
+
+            // Act & Assert
+            var exception = Assert.Throws<TenderException>(() =>
+                tender.ZatvoriTender() // Pokušaj zatvoriti ponovo
+            );
+            Assert.Contains("otvoren", exception.Message.ToLower());
+        }
+
+        [Fact]
+        [Trait("Category", "GetValidnePonude")]
+        public void GetValidnePonude_BezPonuda_VracaPraznuListu()
+        {
+            // Arrange
+            var tender = _fixture.CreateOpenTender();
+
+            // Act
+            var validne = tender.GetValidnePonude();
+
+            Assert.NotNull(validne);
+            Assert.Empty(validne);
+        }
+
+        [Fact]
+        [Trait("Category", "GetValidnePonude")]
+        public void GetValidnePonude_SamoNevalidnePonude_VracaPraznuListu()
+        {
+            // Arrange
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac1 = new Ponudjac("P1", "p1@test.ba", "111");
+            ponudjac1.Id = 1;
+            var ponudjac2 = new Ponudjac("P2", "p2@test.ba", "222");
+            ponudjac2.Id = 2;
+
+            var nevalidna1 = new Ponuda(tender, ponudjac1, 60000, 45, 24, 85); // Previsoka cijena
+            nevalidna1.Validiraj(tender.Kriteriji);
+
+            var nevalidna2 = new Ponuda(tender, ponudjac2, 35000, 100, 24, 85); // Predug rok
+            nevalidna2.Validiraj(tender.Kriteriji);
+
+            tender.Ponude.Add(nevalidna1);
+            tender.Ponude.Add(nevalidna2);
+
+            // Act
+            var validne = tender.GetValidnePonude();
+
+            // Assert
+            Assert.Empty(validne);
+        }
+
+        #endregion
     }
 }

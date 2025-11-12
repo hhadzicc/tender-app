@@ -10,17 +10,46 @@ namespace TenderiApp.Tests.TestData
     [ExcludeFromCodeCoverage]
     public static class TestDataHelper
     {
+        private static string FindFile(string fileName)
+        {
+            // 1) prvo probaj output\TestData (ako je postavljen Copy to Output)
+            var direct = Path.Combine(AppContext.BaseDirectory, "TestData", fileName);
+            if (File.Exists(direct)) return direct;
+
+            // 2) penji se kroz roditelje i traži nekoliko tipičnih rasporeda
+            var dir = new DirectoryInfo(AppContext.BaseDirectory);
+
+            for (var up = 0; dir != null && up < 8; up++, dir = dir.Parent)
+            {
+                string Try(string[] parts) =>
+                    Path.Combine(new[] { dir.FullName }.Concat(parts).ToArray());
+
+                var candidates = new[]
+                {
+            Try(new[] { "TestData", fileName }),
+            Try(new[] { "Tests", "TestData", fileName }),
+            Try(new[] { "TenderAPP", "Tests", "TestData", fileName }),
+            Try(new[] { "TenderAPP", "TenderAPP", "Tests", "TestData", fileName }) // ⟵ TVOJA STVARNOST
+        };
+
+                foreach (var p in candidates)
+                    if (File.Exists(p)) return p;
+            }
+
+            throw new FileNotFoundException(
+                $"Fajl '{fileName}' nije pronađen; start: {AppContext.BaseDirectory}");
+        }
+
+
         public static IEnumerable<object[]> GetPonudeFromCsv()
         {
-            var csvPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "ponude.csv");
-            if (!File.Exists(csvPath))
-            {
-                throw new FileNotFoundException($"CSV fajl ne postoji: {csvPath}");
-            }
+            var csvPath = FindFile("ponude.csv");
             var lines = File.ReadAllLines(csvPath).Skip(1); // Skip header
 
             foreach (var line in lines)
             {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
                 var values = line.Split(',');
                 yield return new object[]
                 {
@@ -35,7 +64,7 @@ namespace TenderiApp.Tests.TestData
 
         public static IEnumerable<object[]> GetKriterijiFromJson()
         {
-            var jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "kriteriji.json");
+            var jsonPath = FindFile("kriteriji.json");
             var json = File.ReadAllText(jsonPath);
             var kriteriji = JsonConvert.DeserializeObject<List<KriterijiDto>>(json);
 
