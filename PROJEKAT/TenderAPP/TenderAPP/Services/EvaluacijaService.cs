@@ -137,7 +137,11 @@ namespace TenderiApp.Services
             ponuda.UkupanSkor = ukupanSkor;
             return ukupanSkor;
         }
-
+        /// <summary>
+        /// OVE SE METODE VIŠE NE KORISTE, ALI SU OSTALE ZAKOMENTIRANE RADI PREGLEDA INLINE KODA
+        /// </summary>
+  
+        /*
         private double IzracunajSkorCijene(double cijena, KriterijiTendera kriteriji)
         {
             double raspon = kriteriji.MaksimalnaCijena - kriteriji.MinimalnaCijena;
@@ -219,6 +223,7 @@ namespace TenderiApp.Services
 
             return kvalitet;
         }
+        */
 
         public Ponuda? OdrediPobjednika(Tender tender)
         {

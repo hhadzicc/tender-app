@@ -5,6 +5,7 @@ using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
 using TenderiApp.Tests.TestData;
 using System.Diagnostics.CodeAnalysis;
+using TenderiApp.Tests.TestData;  
 
 namespace TenderiApp.Tests.Models
 {
@@ -17,6 +18,42 @@ namespace TenderiApp.Tests.Models
         {
             _fixture = fixture;
         }
+
+        //ovdje na pocetku su izdvojeni data driven testovi. ovaj je konkretno za csv
+        #region ValidirajKriterije Tests - DATA DRIVEN (JSON)
+
+        [Theory]
+        [Trait("Category", "Validation")]
+        [Trait("DataDriven", "JSON")]
+        [MemberData(nameof(GetKriterijiTestData))]
+        public void ValidirajKriterije_JsonTestPodaci_ValidniKriteriji(
+            double minCijena, double maxCijena, int maxRok, int minGarancija, int minKvalitet,
+            double pCijene, double pRoka, double pGarancije, double pKvaliteta)
+        {
+            // Arrange
+            var ponderi = new PonderiKriterija(pCijene, pRoka, pGarancije, pKvaliteta);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = minCijena,
+                MaksimalnaCijena = maxCijena,
+                MaksimalanRok = maxRok,
+                MinimalnaGarancija = minGarancija,
+                MinimalanKvalitet = minKvalitet
+            };
+
+            // Act
+            var exception = Record.Exception(() => kriteriji.ValidirajKriterije());
+
+            // Assert - svi podaci iz JSON-a su validni
+            Assert.Null(exception);
+        }
+
+        public static IEnumerable<object[]> GetKriterijiTestData()
+        {
+            return TestDataHelper.GetKriterijiFromJson();
+        }
+
+        #endregion
 
         #region Constructor Tests
 

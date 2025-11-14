@@ -32,8 +32,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="TestData\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<None Update="TestData\kriteriji.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="TestData\ponude.csv">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 

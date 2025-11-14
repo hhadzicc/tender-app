@@ -5,7 +5,7 @@ using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
 using TenderiApp.Tests.TestData;
 using System.Diagnostics.CodeAnalysis;
-
+using TenderiApp.Tests.TestData; 
 namespace TenderiApp.Tests.Models
 {
     [ExcludeFromCodeCoverage]
@@ -17,6 +17,37 @@ namespace TenderiApp.Tests.Models
         {
             _fixture = fixture;
         }
+
+
+        //ovdje na pocetku su izdvojeni data driven testovi. ovaj je konkretno za csv
+        #region Validiraj Tests - DATA DRIVEN (CSV)
+
+        [Theory]
+        [Trait("Category", "Validation")]
+        [Trait("DataDriven", "CSV")]
+        [MemberData(nameof(GetPonudeTestData))]
+        public void Validiraj_CsvTestPodaci_TacnaValidacija(
+            double cijena, int rok, int garancija, int kvalitet, bool ocekivanaValidnost)
+        {
+            // Arrange
+            var tender = _fixture.DefaultTender;
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, cijena, rok, garancija, kvalitet);
+
+            // Act
+            var result = ponuda.Validiraj(tender.Kriteriji);
+
+            // Assert
+            Assert.Equal(ocekivanaValidnost, result);
+            Assert.Equal(ocekivanaValidnost, ponuda.JeValidna);
+        }
+
+        public static IEnumerable<object[]> GetPonudeTestData()
+        {
+            return TestDataHelper.GetPonudeFromCsv();
+        }
+
+        #endregion
 
         #region Constructor Tests
 

@@ -287,5 +287,90 @@ namespace TenderiApp.Tests.Services
         }
 
         #endregion
+
+        #region Additional Coverage Tests
+
+        [Fact]
+        [Trait("Category", "KreirajTender")]
+        public void KreirajTender_RokUProslosti_BacaValidationException()
+        {
+            // Arrange
+            var service = new TenderService();
+            var kriteriji = _fixture.DefaultKriteriji;
+
+            // Act & Assert
+            var exception = Assert.Throws<ValidationException>(() =>
+                service.KreirajTender("Test", "Opis", DateTime.Now.AddDays(-1), kriteriji)
+            );
+            Assert.Contains("budućnosti", exception.Message.ToLower());
+        }
+
+        [Fact]
+        [Trait("Category", "KreirajTender")]
+        public void KreirajTender_NevalidniKriteriji_BacaValidationException()
+        {
+            // Arrange
+            var service = new TenderService();
+            var ponderi = new PonderiKriterija(0.5, 0.3, 0.1, 0.05); // Zbir = 0.95 != 1.0
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 50000,
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+
+            // Act & Assert
+            Assert.Throws<ValidationException>(() =>
+                service.KreirajTender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji)
+            );
+        }
+
+        [Fact]
+        [Trait("Category", "ZatvoriTender")]
+        public void ZatvoriTender_VecEvaluiran_BacaTenderException()
+        {
+            // Arrange
+            var service = new TenderService();
+            var tender = service.KreirajTender("Test", "Opis", DateTime.Now.AddDays(30), _fixture.DefaultKriteriji);
+
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.Validiraj(tender.Kriteriji);
+            tender.DodajPonudu(ponuda);
+
+            service.ZatvoriTender(tender.Id);
+            tender.Status = StatusTendera.Evaluiran; // Promijeni u evaluiran
+
+            // Act & Assert
+            var exception = Assert.Throws<TenderException>(() =>
+                service.ZatvoriTender(tender.Id)
+            );
+            Assert.Contains("otvoren", exception.Message.ToLower());
+        }
+
+        [Fact]
+        [Trait("Category", "GetAktivniTenderi")]
+        public void GetAktivniTenderi_SviZatvoreni_VracaPraznuListu()
+        {
+            // Arrange
+            var service = new TenderService();
+            var tender = service.KreirajTender("Test", "Opis", DateTime.Now.AddDays(30), _fixture.DefaultKriteriji);
+
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.Validiraj(tender.Kriteriji);
+            tender.DodajPonudu(ponuda);
+            service.ZatvoriTender(tender.Id);
+
+            // Act
+            var aktivni = service.GetAktivniTenderi();
+
+            // Assert
+            Assert.Empty(aktivni);
+        }
+
+        #endregion
     }
 }

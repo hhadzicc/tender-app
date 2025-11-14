@@ -23,6 +23,54 @@ namespace TenderiApp.Tests.Services
 
         [Fact]
         [Trait("Category", "PrijaviPonudu")]
+        public void PrijaviPonudu_RokPrekoracen_OznacavaKaoNevalidnu()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+
+            // Act – rok veći od MaksimalanRok
+            var ponuda = service.PrijaviPonudu(tender, ponudjac, 35000, /*rok*/ 120, /*gar*/ 24, /*kval*/ 85);
+
+            // Assert
+            Assert.False(ponuda.JeValidna);
+        }
+
+        [Fact]
+        [Trait("Category", "PrijaviPonudu")]
+        public void PrijaviPonudu_GarancijaIspodMinimuma_OznacavaKaoNevalidnu()
+        {
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+
+            // garancija manja od MinimalnaGarancija
+            var ponuda = service.PrijaviPonudu(tender, ponudjac, 35000, 45, /*gar*/ 6, 85);
+
+            Assert.False(ponuda.JeValidna);
+        }
+
+        [Fact]
+        [Trait("Category", "PrijaviPonudu")]
+        public void PrijaviPonudu_KvalitetIspodMinimuma_OznacavaKaoNevalidnu()
+        {
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+
+            // kvalitet manji od MinimalanKvalitet
+            var ponuda = service.PrijaviPonudu(tender, ponudjac, 35000, 45, 24, /*kval*/ 40);
+
+            Assert.False(ponuda.JeValidna);
+        }
+
+
+
+        //ovi iznad su naknadno dodani
+
+        [Fact]
+        [Trait("Category", "PrijaviPonudu")]
         public void PrijaviPonudu_ValidniPodaci_VracaPonuduSaId()
         {
             // Arrange
@@ -142,6 +190,57 @@ namespace TenderiApp.Tests.Services
         #endregion
 
         #region ValidirajPonudu Tests
+
+
+        [Fact]
+        [Trait("Category", "ValidirajPonudu")]
+        public void ValidirajPonudu_RokPrekoracen_VracaFalseIPostavljaJeValidnaFalse()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, /*rok*/ 120, /*gar*/ 24, /*kval*/ 85);
+
+            // Act
+            var result = service.ValidirajPonudu(ponuda, tender.Kriteriji);
+
+            // Assert
+            Assert.False(result);
+            Assert.False(ponuda.JeValidna);
+        }
+
+        [Fact]
+        [Trait("Category", "ValidirajPonudu")]
+        public void ValidirajPonudu_GarancijaIspodMinimuma_VracaFalseIPostavljaJeValidnaFalse()
+        {
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, /*gar*/ 6, /*kval*/ 85);
+
+            var result = service.ValidirajPonudu(ponuda, tender.Kriteriji);
+
+            Assert.False(result);
+            Assert.False(ponuda.JeValidna);
+        }
+
+        [Fact]
+        [Trait("Category", "ValidirajPonudu")]
+        public void ValidirajPonudu_KvalitetIspodMinimuma_VracaFalseIPostavljaJeValidnaFalse()
+        {
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, /*kval*/ 40);
+
+            var result = service.ValidirajPonudu(ponuda, tender.Kriteriji);
+
+            Assert.False(result);
+            Assert.False(ponuda.JeValidna);
+        }
+
+        // Ovi iznad naknadno ddoani
 
         [Fact]
         [Trait("Category", "ValidirajPonudu")]
@@ -407,6 +506,132 @@ namespace TenderiApp.Tests.Services
             // Assert
             Assert.Single(ponude);
             Assert.Equal(ponudjac1.Id, ponude[0].Ponudjac.Id);
+        }
+
+        #endregion
+
+        #region Additional Coverage Tests
+
+        [Fact]
+        [Trait("Category", "ValidirajPonudu")]
+        public void ValidirajPonudu_NullPonuda_BacaArgumentNullException()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var kriteriji = _fixture.DefaultKriteriji;
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+                service.ValidirajPonudu(null, kriteriji)
+            );
+        }
+
+        [Fact]
+        [Trait("Category", "ValidirajPonudu")]
+        public void ValidirajPonudu_NullKriteriji_BacaArgumentNullException()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = _fixture.DefaultPonudjac;
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+                service.ValidirajPonudu(ponuda, null)
+            );
+        }
+
+        [Fact]
+        [Trait("Category", "GetPonudeZaTender")]
+        public void GetPonudeZaTender_NepostojeciTender_VracaPraznuListu()
+        {
+            // Arrange
+            var service = new PonudaService();
+
+            // Act
+            var ponude = service.GetPonudeZaTender(999);
+
+            // Assert
+            Assert.NotNull(ponude);
+            Assert.Empty(ponude);
+        }
+
+        [Fact]
+        [Trait("Category", "FiltrirajPonude")]
+        public void FiltrirajPonude_SviKriterijiNull_VracaSvePonude()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            p1.Id = 1;
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+            p2.Id = 2;
+
+            service.PrijaviPonudu(tender, p1, 30000, 40, 18, 80);
+            service.PrijaviPonudu(tender, p2, 40000, 50, 24, 85);
+
+            // Act
+            var ponude = service.FiltrirajPonude(null, null, null, null, null);
+
+            // Assert
+            Assert.Equal(2, ponude.Count);
+        }
+
+        [Fact]
+        [Trait("Category", "FiltrirajPonude")]
+        public void FiltrirajPonude_KombinacijaMinMaxCijene_VracaTacnePonude()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            p1.Id = 1;
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+            p2.Id = 2;
+            var p3 = new Ponudjac("P3", "p3@test.ba", "333");
+            p3.Id = 3;
+
+            service.PrijaviPonudu(tender, p1, 25000, 40, 18, 80);
+            service.PrijaviPonudu(tender, p2, 35000, 50, 24, 85);
+            service.PrijaviPonudu(tender, p3, 45000, 60, 12, 75);
+
+            // Act
+            var ponude = service.FiltrirajPonude(minCijena: 30000, maxCijena: 40000);
+
+            // Assert
+            Assert.Single(ponude);
+            Assert.Equal(35000, ponude[0].Cijena);
+        }
+
+        [Fact]
+        [Trait("Category", "FiltrirajPonude")]
+        public void FiltrirajPonude_KombinacijaSvihKriterija_VracaSamoOdgovarajuce()
+        {
+            // Arrange
+            var service = new PonudaService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            p1.Id = 1;
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+            p2.Id = 2;
+
+            service.PrijaviPonudu(tender, p1, 35000, 45, 24, 85); // Sve zadovoljava
+            service.PrijaviPonudu(tender, p2, 48000, 55, 18, 70); // Neki ne zadovoljavaju
+
+            // Act
+            var ponude = service.FiltrirajPonude(
+                tenderId: tender.Id,
+                minCijena: 30000,
+                maxCijena: 40000,
+                maxRok: 50,
+                minKvalitet: 80
+            );
+
+            // Assert
+            Assert.Single(ponude);
+            Assert.Equal(p1.Id, ponude[0].Ponudjac.Id);
         }
 
         #endregion

@@ -171,5 +171,366 @@ namespace TenderiApp.Tests.Services
         }
 
         #endregion
+
+        #region Additional Coverage Tests
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_RazlicitiStatusTendera_PrikazujeStatus()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Zatvoren", result);
+            Assert.Contains("Status:", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_StatusEvaluiran_PrikazujeEvaluiran()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            tender.Status = StatusTendera.Evaluiran;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Evaluiran", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_StatusZavrsen_PrikazujeZavrsen()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            tender.Status = StatusTendera.Zavrsen;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Zavrsen", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_MaliRasponCijene_PrikazujeUzakRaspon()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var ponderi = new PonderiKriterija(0.4, 0.3, 0.15, 0.15);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 15000, // Raspon = 5000 < 10000
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            tender.Id = 1;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Uzak raspon", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_SrednjiRasponCijene_PrikazujeSrednjiRaspon()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var ponderi = new PonderiKriterija(0.4, 0.3, 0.15, 0.15);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 40000, // Raspon = 30000 (10k-50k)
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            tender.Id = 1;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Srednji raspon", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_VelikiRasponCijene_PrikazujeSirokRaspon()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var ponderi = new PonderiKriterija(0.4, 0.3, 0.15, 0.15);
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 10000,
+                MaksimalnaCijena = 100000, // Raspon = 90000 > 50000
+                MaksimalanRok = 90,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 60
+            };
+            var tender = new Tender("Test", "Opis", DateTime.Now.AddDays(30), kriteriji);
+            tender.Id = 1;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("irok raspon", result); // Širok
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_SkorVrloDobar_PrikazujeVrloDobar()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.JeValidna = true;
+            ponuda.UkupanSkor = 80.0; // 75-90
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Vrlo dobar", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_SkorDobar_PrikazujeDobar()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.JeValidna = true;
+            ponuda.UkupanSkor = 65.0; // 60-75
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Dobar", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_SkorPrihvatljiv_PrikazujePrihvatljiv()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
+            ponuda.JeValidna = true;
+            ponuda.UkupanSkor = 50.0; // < 60
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Prihvatljiv", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_NevalidnaPonudaCijenaVanRaspona_PrikazujeRazlog()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 60000, 45, 24, 85); // Previsoka cijena
+            ponuda.JeValidna = false;
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Cijena van dozvoljenog raspona", result);
+        }
+
+
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_NevalidnaPonudaGarancijaIspodMinimuma_PrikazujeRazlog()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 6, 85); // Garancija < 12
+            ponuda.JeValidna = false;
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Garancija ispod minimuma", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiDetaljanIzvjestaj")]
+        public void GenerisiDetaljanIzvjestaj_NevalidnaPonudaKvalitetIspodMinimuma_PrikazujeRazlog()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 50); // Kvalitet < 60
+            ponuda.JeValidna = false;
+            tender.Ponude.Add(ponuda);
+            tender.Status = StatusTendera.Zatvoren;
+
+            // Act
+            var result = service.GenerisiDetaljanIzvjestaj(tender);
+
+            // Assert
+            Assert.Contains("Kvalitet ispod minimuma", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiSazetak")]
+        public void GenerisiSazetak_SamoNevalidnePonude_NePrikazujeStatistiku()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
+            var ponuda = new Ponuda(tender, ponudjac, 60000, 45, 24, 85);
+            ponuda.JeValidna = false;
+            var ponude = new List<Ponuda> { ponuda };
+
+            // Act
+            var result = service.GenerisiSazetak(ponude);
+
+            // Assert
+            Assert.Contains("Ukupno ponuda: 1", result);
+            Assert.Contains("Validne ponude: 0", result);
+            Assert.DoesNotContain("STATISTIKA CIJENA", result);
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiSazetak")]
+        public void GenerisiSazetak_VelikiRasponCijena_TacnaProsjecnaVrijednost()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+            var p3 = new Ponudjac("P3", "p3@test.ba", "333");
+
+            var ponuda1 = new Ponuda(tender, p1, 20000, 40, 18, 80);
+            ponuda1.JeValidna = true;
+
+            var ponuda2 = new Ponuda(tender, p2, 40000, 50, 24, 85);
+            ponuda2.JeValidna = true;
+
+            var ponuda3 = new Ponuda(tender, p3, 30000, 60, 12, 75);
+            ponuda3.JeValidna = true;
+
+            var ponude = new List<Ponuda> { ponuda1, ponuda2, ponuda3 };
+
+            // Act
+            var result = service.GenerisiSazetak(ponude);
+
+            // Assert
+            Assert.Contains("30000", result); // Prosječna cijena = (20000+40000+30000)/3 = 30000
+            Assert.Contains("20000", result); // Min cijena
+            Assert.Contains("40000", result); // Max cijena
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiSazetak")]
+        public void GenerisiSazetak_VelikiRasponRokova_TacnaProsjecnaVrijednost()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+
+            var ponuda1 = new Ponuda(tender, p1, 35000, 30, 18, 80);
+            ponuda1.JeValidna = true;
+
+            var ponuda2 = new Ponuda(tender, p2, 40000, 60, 24, 85);
+            ponuda2.JeValidna = true;
+
+            var ponude = new List<Ponuda> { ponuda1, ponuda2 };
+
+            // Act
+            var result = service.GenerisiSazetak(ponude);
+
+            // Assert
+            Assert.Contains("STATISTIKA ROKOVA", result);
+            Assert.Contains("45", result); // Prosječan rok = (30+60)/2 = 45
+            Assert.Contains("30", result); // Min rok
+            Assert.Contains("60", result); // Max rok
+        }
+
+        [Fact]
+        [Trait("Category", "GenerisiSazetak")]
+        public void GenerisiSazetak_VelikiRasponGarancija_TacnaProsjecnaVrijednost()
+        {
+            // Arrange
+            var service = new IzvjestajService();
+            var tender = _fixture.CreateOpenTender();
+            var p1 = new Ponudjac("P1", "p1@test.ba", "111");
+            var p2 = new Ponudjac("P2", "p2@test.ba", "222");
+
+            var ponuda1 = new Ponuda(tender, p1, 35000, 40, 12, 80);
+            ponuda1.JeValidna = true;
+
+            var ponuda2 = new Ponuda(tender, p2, 40000, 50, 36, 85);
+            ponuda2.JeValidna = true;
+
+            var ponude = new List<Ponuda> { ponuda1, ponuda2 };
+
+            // Act
+            var result = service.GenerisiSazetak(ponude);
+
+            // Assert
+            Assert.Contains("STATISTIKA GARANCIJA", result);
+            Assert.Contains("24", result); // Prosječna garancija = (12+36)/2 = 24
+            Assert.Contains("12", result); // Min garancija
+            Assert.Contains("36", result); // Max garancija
+        }
+
+        #endregion
     }
 }

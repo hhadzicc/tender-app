@@ -1,6 +1,10 @@
-﻿//Trenutno zakomentarisano jer je izbacen controller iz coverage jer je logika u servisima i ne moze se dobiti 90% coverage sa controllerima iz tog razloga
+﻿// Trenutno zakomentarisano jer je kontroler isključen iz code coverage-a — 
+// sva poslovna logika se nalazi u servisima, pa se s kontrolerom ne može 
+// postići traženih 90% pokrivenosti. 
+// Ovi mock testovi su ostavljeni isključivo radi ispunjavanja uslova zadatka 
+// (demonstracija mock testiranja), iako ne doprinose samom coverage-u, 
+// budući da pokrivaju samo interakciju kontroler–servis.
 
-/*
 using System;
 using System.Collections.Generic;
 using Moq;
@@ -148,4 +152,4 @@ namespace TenderiApp.Tests.Controllers
     }
 }
 
-*/
+
