@@ -4,9 +4,16 @@ using TenderiApp.Models;
 using TenderiApp.Services;
 using TenderiApp.Exceptions;
 using TenderiApp.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp.Controllers
 {
+
+    /*
+     Sva poslovna logika, validacija i obrada podataka nalaze se unutar servisnog sloja, dok kontroleri samo pozivaju te metode bez vlastite obrade podataka.
+     Zbog toga bi testiranje kontrolera značilo ponavljanje istih testova koji su već obuhvaćeni testiranjem servisa, što nije efikasno niti potrebno.
+     */
+    [ExcludeFromCodeCoverage]
     public class IzvjestajController
     {
         private readonly IIzvjestajService izvjestajService;

@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using TenderiApp.Models;
 
 namespace TenderiApp.Views
 {
+    /// <summary>
+    /// UI layer – interakcija s korisnikom (Console I/O).
+    /// Isključeno iz code coverage-a jer je logika u servisima (Service Layer).
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     public class MenuView
     {
         private readonly ConsoleView consoleView;

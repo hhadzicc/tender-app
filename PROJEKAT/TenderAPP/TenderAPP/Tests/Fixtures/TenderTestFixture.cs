@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using TenderiApp.Models;
 
 namespace TenderiApp.Tests.Fixtures
 {
+    [ExcludeFromCodeCoverage]
     public class TenderTestFixture : IDisposable
     {
         public PonderiKriterija DefaultPonderi { get; }

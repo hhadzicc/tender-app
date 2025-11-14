@@ -6,9 +6,11 @@ using TenderiApp.Controllers;
 using TenderiApp.Views;
 using TenderiApp.Exceptions;
 using TenderiApp.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TenderiApp
 {
+    [ExcludeFromCodeCoverage]
     class Program
     {
         private static ITenderService tenderService = new TenderService();

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
 namespace TenderiApp.Tests.TestData
 {
+    [ExcludeFromCodeCoverage]
     public static class TestDataHelper
     {
         public static IEnumerable<object[]> GetPonudeFromCsv()
