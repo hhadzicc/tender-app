@@ -136,5 +136,27 @@ namespace TenderiApp.Services
             tender.ZatvoriTender();
             return true;
         }
+
+        public void SortirajPonude(Tender tender)
+        {
+            if (tender == null)
+                throw new ArgumentNullException(nameof(tender));
+
+            // Provjeravamo da ponude postoje
+            if (tender.Ponude == null || tender.Ponude.Count == 0)
+                throw new TenderException("Tender nema ponuda za sortiranje.");
+
+            // Prvo izračunavamo UkupanSkor za sve ponude
+            foreach (var ponuda in tender.Ponude)
+            {
+                ponuda.IzracunajSkor(tender.Kriteriji);
+            }
+
+            // Sortiramo po UkupanSkor opadajuće
+            tender.Ponude = tender.Ponude
+                .OrderByDescending(p => p.UkupanSkor)
+                .ToList();
+        }
+
     }
 }
