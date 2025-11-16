@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using TenderiApp.Exceptions;
 using TenderiApp.Interfaces;
 using TenderiApp.Models;
-using TenderiApp.Exceptions;
 
 namespace TenderiApp.Services
 {
@@ -157,6 +159,27 @@ namespace TenderiApp.Services
                 .OrderByDescending(p => p.UkupanSkor)
                 .ToList();
         }
+
+
+        //JSON IMPLEMENTACIJA ZA TASK 4
+        // Čuvanje tendera u JSON fajl
+        public void SacuvajTenderJSON(string path)
+        {
+            string json = JsonSerializer.Serialize(tenderi, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, json);
+        }
+
+        public void UcitajTenderJSON(string path)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException("JSON fajl nije pronađen", path);
+
+            string json = File.ReadAllText(path);
+            tenderi = JsonSerializer.Deserialize<List<Tender>>(json) ?? new List<Tender>();
+        }
+
+
+
 
     }
 }

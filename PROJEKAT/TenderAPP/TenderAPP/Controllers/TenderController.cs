@@ -228,5 +228,18 @@ namespace TenderiApp.Controllers
                 return null;
             }
         }
+
+
+        //JSON ZA POTREBE TASK 4
+
+        public void SacuvajTenderJSON(string path)
+        {
+            tenderService.SacuvajTenderJSON(path);
+        }
+
+        public void UcitajTenderJSON(string path)
+        {
+            tenderService.UcitajTenderJSON(path);
+        }
     }
 }

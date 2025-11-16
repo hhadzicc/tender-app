@@ -49,6 +49,9 @@ namespace TenderiApp
                         case 4:
                             KreirajTestnePodatke();
                             break;
+                        case 5: // Nova opcija za potrebe TASK 4
+                            MeniSacuvajTender();
+                            break;
                         case 0:
                             nastaviti = false;
                             consoleView.PrikaziPoruku("Hvala što ste koristili aplikaciju!", TipPoruke.Info);
@@ -405,5 +408,41 @@ namespace TenderiApp
                 menuView.PrikaziGresku($"Greška prilikom kreiranja testnih podataka: {ex.Message}");
             }
         }
+
+        static void MeniSacuvajTender()
+        {
+            bool nazad = false;
+
+            while (!nazad)
+            {
+                int izbor = menuView.PrikaziMeniSacuvajTender();
+
+                switch (izbor)
+                {
+                    case 1: // Sačuvaj tender
+                        string pathSave = consoleView.UcitajTekst("Unesite putanju za čuvanje fajla");
+                        tenderController.SacuvajTenderJSON(pathSave);
+                        consoleView.PrikaziPoruku($"Tenderi su sačuvani u '{pathSave}'", TipPoruke.Uspjeh);
+                        break;
+
+                    case 2: // Učitaj tender
+                        string pathLoad = consoleView.UcitajTekst("Unesite putanju fajla za učitavanje");
+                        tenderController.UcitajTenderJSON(pathLoad);
+                        consoleView.PrikaziPoruku($"Tenderi su učitani iz '{pathLoad}'", TipPoruke.Uspjeh);
+                        break;
+
+                    case 0:
+                        nazad = true;
+                        break;
+
+                    default:
+                        consoleView.PrikaziPoruku("Nepoznata opcija!", TipPoruke.Greska);
+                        break;
+                }
+            }
+        }
+
+
+
     }
 }

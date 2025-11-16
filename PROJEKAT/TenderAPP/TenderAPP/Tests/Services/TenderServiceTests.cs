@@ -7,6 +7,8 @@ using TenderiApp.Exceptions;
 using TenderiApp.Tests.Fixtures;
 using System.Diagnostics.CodeAnalysis;
 
+
+
 namespace TenderiApp.Tests.Services
 {
     [ExcludeFromCodeCoverage]
@@ -371,7 +373,7 @@ namespace TenderiApp.Tests.Services
             Assert.Empty(aktivni);
         }
 
-
+        //ZA potrebe task 4
         [Fact]
         public void Test_SortiranjePonuda()
         {
@@ -428,6 +430,76 @@ namespace TenderiApp.Tests.Services
             Assert.True(tender.Ponude[0].UkupanSkor >= tender.Ponude[1].UkupanSkor);
             Assert.True(tender.Ponude[1].UkupanSkor >= tender.Ponude[2].UkupanSkor);
         }
+
+        //ZA potrebe task 4 JSON TESTOVI 
+        [Fact]
+        public void JsonUpisICitanje_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var service = new TenderService();
+
+            // Kreiramo pondere
+            var ponderi = new PonderiKriterija(0.4, 0.3, 0.2, 0.1);
+
+            // Kreiramo kriterije za tender
+            var kriteriji = new KriterijiTendera(ponderi)
+            {
+                MinimalnaCijena = 1000,
+                MaksimalnaCijena = 5000,
+                MaksimalanRok = 30,
+                MinimalnaGarancija = 12,
+                MinimalanKvalitet = 70
+            };
+
+            // Kreiramo testni tender
+            var tenderOriginal = service.KreirajTender(
+                naziv: "Testni Tender",
+                opis: "Ovo je JSON test",
+                rok: DateTime.Now.AddDays(10),
+                kriteriji: kriteriji
+            );
+
+            // Putanja za testni JSON (koristi temp folder)
+            string filePath = Path.Combine(Path.GetTempPath(), "tender_test.json");
+
+            // Act 1: Snimi JSON
+            service.SacuvajTenderJSON(filePath);
+
+            // Act 2: Učitaj JSON u novi servis
+            var noviService = new TenderService();
+            noviService.UcitajTenderJSON(filePath);
+
+            var ucitaniTenderi = noviService.GetSviTenderi();
+
+            // Assert
+            Assert.Single(ucitaniTenderi);
+            var t = ucitaniTenderi[0];
+
+            Assert.Equal(tenderOriginal.Naziv, t.Naziv);
+            Assert.Equal(tenderOriginal.Opis, t.Opis);
+            Assert.Equal(tenderOriginal.RokZaPrijavu.Date, t.RokZaPrijavu.Date);
+
+            // Poređenje kriterija
+            Assert.Equal(kriteriji.MinimalnaCijena, t.Kriteriji.MinimalnaCijena);
+            Assert.Equal(kriteriji.MaksimalnaCijena, t.Kriteriji.MaksimalnaCijena);
+            Assert.Equal(kriteriji.MaksimalanRok, t.Kriteriji.MaksimalanRok);
+            Assert.Equal(kriteriji.MinimalnaGarancija, t.Kriteriji.MinimalnaGarancija);
+            Assert.Equal(kriteriji.MinimalanKvalitet, t.Kriteriji.MinimalanKvalitet);
+
+            // Poređenje pondera
+            Assert.Equal(ponderi.PonderCijene, t.Kriteriji.Ponderi.PonderCijene);
+            Assert.Equal(ponderi.PonderRoka, t.Kriteriji.Ponderi.PonderRoka);
+            Assert.Equal(ponderi.PonderGarancije, t.Kriteriji.Ponderi.PonderGarancije);
+            Assert.Equal(ponderi.PonderKvaliteta, t.Kriteriji.Ponderi.PonderKvaliteta);
+
+            // Cleanup
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+        }
+
+
+
+
 
 
 
