@@ -27,6 +27,9 @@ namespace TenderiApp.Views
             Console.WriteLine("2. Upravljanje ponudama");
             Console.WriteLine("3. Evaluacija i izvještaji");
             Console.WriteLine("4. Testni podaci");
+            Console.WriteLine("5. Čuvanje i učitavanje tendera");// za potrebe TASK 4
+
+
             Console.WriteLine("0. Izlaz");
             Console.WriteLine();
 
@@ -204,5 +207,21 @@ namespace TenderiApp.Views
             consoleView.PrikaziPoruku(poruka, TipPoruke.Uspjeh);
             consoleView.CekajEnter();
         }
+
+        public int PrikaziMeniSacuvajTender() // za potrebe TASK 4
+        {
+            consoleView.PrikaziNaslov("ČUVANJE I UČITAVANJE TENDERA");
+
+            Console.WriteLine("1. Sačuvaj tendere u JSON fajl");
+            Console.WriteLine("2. Učitaj tendere iz JSON fajla");
+            Console.WriteLine("0. Nazad");
+            Console.WriteLine();
+
+            return consoleView.UcitajBroj("Izaberite opciju");
+        }
+
+
+
+
     }
 }

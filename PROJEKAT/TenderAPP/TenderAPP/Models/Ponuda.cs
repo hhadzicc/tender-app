@@ -15,6 +15,10 @@ namespace TenderiApp.Models
         public DateTime DatumPrijave { get; set; }
         public double UkupanSkor { get; set; }
         public bool JeValidna { get; set; }
+        public Ponuda()
+        {
+            // potreban za JSON deserializaciju
+        }
 
         public Ponuda(Tender tender, Ponudjac ponudjac, double cijena, int rok, int garancija, int kvalitet)
         {

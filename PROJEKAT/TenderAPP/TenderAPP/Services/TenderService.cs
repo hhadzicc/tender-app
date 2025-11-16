@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using TenderiApp.Exceptions;
 using TenderiApp.Interfaces;
 using TenderiApp.Models;
-using TenderiApp.Exceptions;
 
 namespace TenderiApp.Services
 {
@@ -136,5 +138,48 @@ namespace TenderiApp.Services
             tender.ZatvoriTender();
             return true;
         }
+
+        public void SortirajPonude(Tender tender)
+        {
+            if (tender == null)
+                throw new ArgumentNullException(nameof(tender));
+
+            // Provjeravamo da ponude postoje
+            if (tender.Ponude == null || tender.Ponude.Count == 0)
+                throw new TenderException("Tender nema ponuda za sortiranje.");
+
+            // Prvo izračunavamo UkupanSkor za sve ponude
+            foreach (var ponuda in tender.Ponude)
+            {
+                ponuda.IzracunajSkor(tender.Kriteriji);
+            }
+
+            // Sortiramo po UkupanSkor opadajuće
+            tender.Ponude = tender.Ponude
+                .OrderByDescending(p => p.UkupanSkor)
+                .ToList();
+        }
+
+
+        //JSON IMPLEMENTACIJA ZA TASK 4
+        // Čuvanje tendera u JSON fajl
+        public void SacuvajTenderJSON(string path)
+        {
+            string json = JsonSerializer.Serialize(tenderi, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, json);
+        }
+
+        public void UcitajTenderJSON(string path)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException("JSON fajl nije pronađen", path);
+
+            string json = File.ReadAllText(path);
+            tenderi = JsonSerializer.Deserialize<List<Tender>>(json) ?? new List<Tender>();
+        }
+
+
+
+
     }
 }

@@ -44,5 +44,10 @@ namespace TenderiApp.Models
         {
             return PonderCijene + PonderRoka + PonderGarancije + PonderKvaliteta;
         }
+
+        public PonderiKriterija()
+        {
+            // potreban za JSON deserializaciju
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace TenderiApp.Interfaces
         List<Tender> GetSviTenderi();
         List<Tender> GetAktivniTenderi();
         bool ZatvoriTender(int tenderId);
+        void SacuvajTenderJSON(string path); // Za potrebe 
+        void UcitajTenderJSON(string path);
     }
 }

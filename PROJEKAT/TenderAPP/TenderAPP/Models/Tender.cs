@@ -96,5 +96,11 @@ namespace TenderiApp.Models
         {
             return Ponude.Where(p => p.JeValidna).ToList();
         }
+
+        public Tender()
+        {
+            // Potreban za JSON deserializaciju
+        }
+
     }
 }
