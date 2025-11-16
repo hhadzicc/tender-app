@@ -1,0 +1,251 @@
+[
+  {
+    "Id": 1,
+    "Naziv": "Nabavka ra\u010Dunarske opreme",
+    "Opis": "Tender za nabavku ra\u010Dunara, monitora i periferija za potrebe fakulteta",
+    "DatumKreiranja": "2025-11-16T12:44:15.4742809+01:00",
+    "RokZaPrijavu": "2025-12-16T12:44:15.4060781+01:00",
+    "Kriteriji": {
+      "MinimalnaCijena": 10000,
+      "MaksimalnaCijena": 50000,
+      "MaksimalanRok": 90,
+      "MinimalnaGarancija": 12,
+      "MinimalanKvalitet": 60,
+      "Ponderi": {
+        "PonderCijene": 0.4,
+        "PonderRoka": 0.3,
+        "PonderGarancije": 0.15,
+        "PonderKvaliteta": 0.15
+      }
+    },
+    "Ponude": [
+      {
+        "Id": 1,
+        "TenderId": 1,
+        "Ponudjac": {
+          "Id": 1,
+          "Naziv": "Tech Solutions d.o.o.",
+          "Email": "info@techsolutions.ba",
+          "Telefon": "\u002B387 33 123 456",
+          "BrojPonuda": 0
+        },
+        "Cijena": 35000,
+        "RokIsporuke": 45,
+        "Garancija": 24,
+        "Kvalitet": 85,
+        "DatumPrijave": "2025-11-16T12:44:15.4840484+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 2,
+        "TenderId": 1,
+        "Ponudjac": {
+          "Id": 2,
+          "Naziv": "IT Comp d.o.o.",
+          "Email": "kontakt@itcomp.ba",
+          "Telefon": "\u002B387 33 234 567",
+          "BrojPonuda": 0
+        },
+        "Cijena": 42000,
+        "RokIsporuke": 30,
+        "Garancija": 18,
+        "Kvalitet": 90,
+        "DatumPrijave": "2025-11-16T12:44:15.486305+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 3,
+        "TenderId": 1,
+        "Ponudjac": {
+          "Id": 3,
+          "Naziv": "Digital World",
+          "Email": "info@digitalworld.ba",
+          "Telefon": "\u002B387 33 345 678",
+          "BrojPonuda": 0
+        },
+        "Cijena": 28000,
+        "RokIsporuke": 60,
+        "Garancija": 12,
+        "Kvalitet": 75,
+        "DatumPrijave": "2025-11-16T12:44:15.4866916+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 4,
+        "TenderId": 1,
+        "Ponudjac": {
+          "Id": 4,
+          "Naziv": "Hardware Plus",
+          "Email": "office@hardwareplus.ba",
+          "Telefon": "\u002B387 33 456 789",
+          "BrojPonuda": 0
+        },
+        "Cijena": 55000,
+        "RokIsporuke": 40,
+        "Garancija": 36,
+        "Kvalitet": 95,
+        "DatumPrijave": "2025-11-16T12:44:15.4868615+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": false
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "Id": 2,
+    "Naziv": "Nabavka kancelarijskog materijala",
+    "Opis": "Godi\u0161nja nabavka kancelarijskog materijala i potro\u0161nog materijala za \u0161tampa\u010De",
+    "DatumKreiranja": "2025-11-16T12:44:15.4870376+01:00",
+    "RokZaPrijavu": "2025-12-01T12:44:15.4870221+01:00",
+    "Kriteriji": {
+      "MinimalnaCijena": 5000,
+      "MaksimalnaCijena": 20000,
+      "MaksimalanRok": 60,
+      "MinimalnaGarancija": 6,
+      "MinimalanKvalitet": 50,
+      "Ponderi": {
+        "PonderCijene": 0.5,
+        "PonderRoka": 0.2,
+        "PonderGarancije": 0.2,
+        "PonderKvaliteta": 0.1
+      }
+    },
+    "Ponude": [
+      {
+        "Id": 5,
+        "TenderId": 2,
+        "Ponudjac": {
+          "Id": 5,
+          "Naziv": "Office Pro",
+          "Email": "sales@officepro.ba",
+          "Telefon": "\u002B387 33 567 890",
+          "BrojPonuda": 0
+        },
+        "Cijena": 12000,
+        "RokIsporuke": 30,
+        "Garancija": 12,
+        "Kvalitet": 70,
+        "DatumPrijave": "2025-11-16T12:44:15.4871051+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 6,
+        "TenderId": 2,
+        "Ponudjac": {
+          "Id": 6,
+          "Naziv": "Paper World",
+          "Email": "info@paperworld.ba",
+          "Telefon": "\u002B387 33 678 901",
+          "BrojPonuda": 0
+        },
+        "Cijena": 15000,
+        "RokIsporuke": 20,
+        "Garancija": 6,
+        "Kvalitet": 80,
+        "DatumPrijave": "2025-11-16T12:44:15.4872658+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "Id": 3,
+    "Naziv": "Odr\u017Eavanje IT infrastrukture",
+    "Opis": "Godi\u0161nji ugovor o odr\u017Eavanju servera, mre\u017Ee i IT opreme",
+    "DatumKreiranja": "2025-11-16T12:44:15.4874976+01:00",
+    "RokZaPrijavu": "2025-12-31T12:44:15.4874925+01:00",
+    "Kriteriji": {
+      "MinimalnaCijena": 20000,
+      "MaksimalnaCijena": 100000,
+      "MaksimalanRok": 120,
+      "MinimalnaGarancija": 24,
+      "MinimalanKvalitet": 70,
+      "Ponderi": {
+        "PonderCijene": 0.35,
+        "PonderRoka": 0.25,
+        "PonderGarancije": 0.25,
+        "PonderKvaliteta": 0.15
+      }
+    },
+    "Ponude": [
+      {
+        "Id": 7,
+        "TenderId": 3,
+        "Ponudjac": {
+          "Id": 7,
+          "Naziv": "Network Solutions",
+          "Email": "contact@netsolutions.ba",
+          "Telefon": "\u002B387 33 789 012",
+          "BrojPonuda": 0
+        },
+        "Cijena": 45000,
+        "RokIsporuke": 90,
+        "Garancija": 24,
+        "Kvalitet": 85,
+        "DatumPrijave": "2025-11-16T12:44:15.4876395+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 8,
+        "TenderId": 3,
+        "Ponudjac": {
+          "Id": 8,
+          "Naziv": "IT Service Pro",
+          "Email": "info@itservicepro.ba",
+          "Telefon": "\u002B387 33 890 123",
+          "BrojPonuda": 0
+        },
+        "Cijena": 38000,
+        "RokIsporuke": 100,
+        "Garancija": 36,
+        "Kvalitet": 90,
+        "DatumPrijave": "2025-11-16T12:44:15.4879522+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 9,
+        "TenderId": 3,
+        "Ponudjac": {
+          "Id": 9,
+          "Naziv": "Tech Support",
+          "Email": "office@techsupport.ba",
+          "Telefon": "\u002B387 33 901 234",
+          "BrojPonuda": 0
+        },
+        "Cijena": 52000,
+        "RokIsporuke": 80,
+        "Garancija": 30,
+        "Kvalitet": 80,
+        "DatumPrijave": "2025-11-16T12:44:15.4898849+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": true
+      },
+      {
+        "Id": 10,
+        "TenderId": 3,
+        "Ponudjac": {
+          "Id": 10,
+          "Naziv": "Budget IT",
+          "Email": "info@budgetit.ba",
+          "Telefon": "\u002B387 33 012 345",
+          "BrojPonuda": 0
+        },
+        "Cijena": 15000,
+        "RokIsporuke": 150,
+        "Garancija": 6,
+        "Kvalitet": 50,
+        "DatumPrijave": "2025-11-16T12:44:15.4919511+01:00",
+        "UkupanSkor": 0,
+        "JeValidna": false
+      }
+    ],
+    "Status": 0
+  }
+]
