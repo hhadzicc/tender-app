@@ -29,7 +29,7 @@ namespace TenderiApp.Tests.Models
             var ponudjac = new Ponudjac("Test", "test@test.ba", "123");
             var ponuda = new Ponuda(tender, ponudjac, 35000, 45, 24, 85);
             ponuda.JeValidna = true;
-            ponuda.UkupanSkor = 78.5;
+            ponuda.UkupanSkor = 78,5;
             var ponude = new List<Ponuda> { ponuda };
 
             // Act
