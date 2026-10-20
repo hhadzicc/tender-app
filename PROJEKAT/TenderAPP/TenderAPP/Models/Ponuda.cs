@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TenderiApp.Exceptions;
 
 namespace TenderiApp.Models
@@ -66,44 +66,25 @@ namespace TenderiApp.Models
         public double IzracunajSkor(KriterijiTendera kriteriji)
         {
             if (kriteriji == null)
-            {
                 throw new ArgumentNullException(nameof(kriteriji));
-            }
 
             if (!JeValidna)
             {
+                UkupanSkor = 0;
                 return 0;
             }
 
-            double skorCijene = 0;
             double rasponCijene = kriteriji.MaksimalnaCijena - kriteriji.MinimalnaCijena;
-
-            if (rasponCijene > 0)
-            {
-                skorCijene = (1 - (Cijena - kriteriji.MinimalnaCijena) / rasponCijene) * 100;
-            }
-            else
-            {
-                skorCijene = 100;
-            }
-
-            double skorRoka = 0;
-            if (kriteriji.MaksimalanRok > 0)
-            {
-                skorRoka = (1 - (double)RokIsporuke / kriteriji.MaksimalanRok) * 100;
-            }
-
-            double skorGarancije = 0;
-            if (kriteriji.MinimalnaGarancija > 0)
-            {
-                skorGarancije = Math.Min((double)Garancija / kriteriji.MinimalnaGarancija, 2.0) * 50;
-            }
-            else
-            {
-                skorGarancije = Garancija > 0 ? 100 : 0;
-            }
-
-            double skorKvaliteta = Kvalitet;
+            double skorCijene = rasponCijene > 0
+                ? (1 - Math.Clamp((Cijena - kriteriji.MinimalnaCijena) / rasponCijene, 0, 1)) * 100
+                : 100;
+            double skorRoka = kriteriji.MaksimalanRok > 0
+                ? (1 - Math.Clamp((double)RokIsporuke / kriteriji.MaksimalanRok, 0, 1)) * 100
+                : 100;
+            double skorGarancije = kriteriji.MinimalnaGarancija > 0
+                ? Math.Min((double)Garancija / kriteriji.MinimalnaGarancija, 2.0) * 50
+                : (Garancija > 0 ? 100 : 0);
+            double skorKvaliteta = Math.Clamp(Kvalitet, 0, 100);
 
             UkupanSkor = (skorCijene * kriteriji.Ponderi.PonderCijene) +
                         (skorRoka * kriteriji.Ponderi.PonderRoka) +

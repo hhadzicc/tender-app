@@ -1,8 +1,10 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenderAPP", "TenderAPP\TenderAPP.csproj", "{442111D1-7379-4CA0-9C2F-8FA5D5946771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenderiApp.Tests", "TenderAPP\Tests\TenderiApp.Tests.csproj", "{4E13C782-61BF-4A82-BD9F-8B72F4F7067F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,16 +16,14 @@ Global
 		{442111D1-7379-4CA0-9C2F-8FA5D5946771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{442111D1-7379-4CA0-9C2F-8FA5D5946771}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{442111D1-7379-4CA0-9C2F-8FA5D5946771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E13C782-61BF-4A82-BD9F-8B72F4F7067F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E13C782-61BF-4A82-BD9F-8B72F4F7067F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E13C782-61BF-4A82-BD9F-8B72F4F7067F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E13C782-61BF-4A82-BD9F-8B72F4F7067F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-
-    ### ⬇⬇⬇ ovde se dodaje — AUTOMATSKI LOAD .runsettings FAJLA ⬇⬇⬇
-	GlobalSection(TestSettings) = postSolution
-		TestSettingsFile = TenderiApp.Tests\coverlet.runsettings
-	EndGlobalSection
-    ### ⬆⬆⬆ dakle iznad⬆⬆⬆
 
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB8A8FBA-F709-4EF4-91E2-FABAB521152D}

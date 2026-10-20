@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using TenderiApp.Exceptions;
 using TenderiApp.Interfaces;
 using TenderiApp.Models;
@@ -32,56 +31,6 @@ namespace TenderiApp.Services
                 throw new ArgumentNullException(nameof(kriteriji));
             }
 
-            // INLINE kod iz kriteriji.ValidirajKriterije()
-            // kriteriji.ValidirajKriterije(); // Zakomentirano
-
-            // Validacija kriterija - inline kod
-            if (kriteriji.MinimalnaCijena < 0)
-            {
-                throw new ValidationException("Minimalna cijena ne može biti negativna.");
-            }
-
-            if (kriteriji.MaksimalnaCijena < kriteriji.MinimalnaCijena)
-            {
-                throw new ValidationException("Maksimalna cijena ne može biti manja od minimalne cijene.");
-            }
-
-            if (kriteriji.MaksimalanRok <= 0)
-            {
-                throw new ValidationException("Maksimalan rok mora biti pozitivan broj.");
-            }
-
-            if (kriteriji.MinimalnaGarancija < 0)
-            {
-                throw new ValidationException("Minimalna garancija ne može biti negativna.");
-            }
-
-            if (kriteriji.MinimalanKvalitet < 0 || kriteriji.MinimalanKvalitet > 100)
-            {
-                throw new ValidationException("Minimalan kvalitet mora biti između 0 i 100.");
-            }
-
-            // INLINE kod iz kriteriji.Ponderi.ValidirajPondere()
-            if (kriteriji.Ponderi.PonderCijene < 0 || kriteriji.Ponderi.PonderRoka < 0 ||
-                kriteriji.Ponderi.PonderGarancije < 0 || kriteriji.Ponderi.PonderKvaliteta < 0)
-            {
-                throw new ValidationException("Ponderi ne mogu biti negativni.");
-            }
-
-            double ukupno = kriteriji.Ponderi.PonderCijene + kriteriji.Ponderi.PonderRoka +
-                            kriteriji.Ponderi.PonderGarancije + kriteriji.Ponderi.PonderKvaliteta;
-
-            if (Math.Abs(ukupno - 1.0) > 0.001)
-            {
-                throw new ValidationException($"Ukupni zbir pondera mora biti 1.0. Trenutno: {ukupno}");
-            }
-
-            if (kriteriji.Ponderi.PonderCijene > 1 || kriteriji.Ponderi.PonderRoka > 1 ||
-                kriteriji.Ponderi.PonderGarancije > 1 || kriteriji.Ponderi.PonderKvaliteta > 1)
-            {
-                throw new ValidationException("Nijedan ponder ne može biti veći od 1.");
-            }
-
             Tender tender = new Tender(naziv, opis, rok, kriteriji)
             {
                 Id = nextId++
@@ -90,9 +39,6 @@ namespace TenderiApp.Services
             tenderi.Add(tender);
             return tender;
         }
-
-        // ZADRŽI pomoćne metode (ne briši!)
-        // Metode u KriterijiTendera i PonderiKriterija ostaju nepromijenjene
 
         public Tender? GetTender(int id)
         {
@@ -160,8 +106,6 @@ namespace TenderiApp.Services
                 .ToList();
         }
 
-
-        //JSON IMPLEMENTACIJA ZA TASK 4
         // Čuvanje tendera u JSON fajl
         public void SacuvajTenderJSON(string path)
         {
@@ -176,10 +120,8 @@ namespace TenderiApp.Services
 
             string json = File.ReadAllText(path);
             tenderi = JsonSerializer.Deserialize<List<Tender>>(json) ?? new List<Tender>();
+            nextId = tenderi.Count == 0 ? 1 : tenderi.Max(t => t.Id) + 1;
         }
-
-
-
 
     }
 }

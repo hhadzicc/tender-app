@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Xunit;
 using TenderiApp.Models;
 using TenderiApp.Exceptions;
@@ -328,6 +328,21 @@ namespace TenderiApp.Tests.Models
 
             // Assert
             Assert.Equal(0, skor);
+            Assert.Equal(0, ponuda.UkupanSkor);
+        }
+
+        [Fact]
+        public void IzracunajSkor_NakonStoPonudaPostaneNevalidna_BrisePrethodniSkor()
+        {
+            var tender = _fixture.CreateOpenTender();
+            var ponuda = new Ponuda(tender, _fixture.DefaultPonudjac, 35000, 45, 24, 85);
+            ponuda.Validiraj(tender.Kriteriji);
+            Assert.True(ponuda.IzracunajSkor(tender.Kriteriji) > 0);
+
+            ponuda.Cijena = 60000;
+            ponuda.Validiraj(tender.Kriteriji);
+
+            Assert.Equal(0, ponuda.IzracunajSkor(tender.Kriteriji));
             Assert.Equal(0, ponuda.UkupanSkor);
         }
 

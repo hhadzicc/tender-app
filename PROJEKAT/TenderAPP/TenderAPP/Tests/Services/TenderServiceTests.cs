@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Xunit;
 using TenderiApp.Models;
@@ -429,6 +429,57 @@ namespace TenderiApp.Tests.Services
             // Assert – provjera da je lista sortirana po UkupanSkor
             Assert.True(tender.Ponude[0].UkupanSkor >= tender.Ponude[1].UkupanSkor);
             Assert.True(tender.Ponude[1].UkupanSkor >= tender.Ponude[2].UkupanSkor);
+        }
+
+        [Theory]
+        [InlineData(1, 2)]
+        [InlineData(42, 3)]
+        public void UcitajTenderJSON_NovoKreiranje_NastavljaNakonNajvecegId(int prviId, int drugiId)
+        {
+            var original = new TenderService();
+            var kriteriji = _fixture.DefaultKriteriji;
+            original.KreirajTender("Prvi", "Opis", DateTime.Now.AddDays(30), kriteriji).Id = prviId;
+            original.KreirajTender("Drugi", "Opis", DateTime.Now.AddDays(30), kriteriji).Id = drugiId;
+            string path = Path.GetTempFileName();
+
+            try
+            {
+                original.SacuvajTenderJSON(path);
+                var ucitani = new TenderService();
+                ucitani.UcitajTenderJSON(path);
+
+                var novi = ucitani.KreirajTender("Novi", "Opis", DateTime.Now.AddDays(30), kriteriji);
+
+                Assert.Equal(Math.Max(prviId, drugiId) + 1, novi.Id);
+                Assert.Equal(3, ucitani.GetSviTenderi().Select(t => t.Id).Distinct().Count());
+            }
+            finally
+            {
+                File.Delete(path);
+            }
+        }
+
+        [Fact]
+        public void UcitajTenderJSON_PraznaLista_NovoKreiranjePocinjeOdJedan()
+        {
+            var service = new TenderService();
+            service.KreirajTender("Postojeci", "Opis", DateTime.Now.AddDays(30), _fixture.DefaultKriteriji);
+            string path = Path.GetTempFileName();
+
+            try
+            {
+                File.WriteAllText(path, "[]");
+                service.UcitajTenderJSON(path);
+
+                var novi = service.KreirajTender("Novi", "Opis", DateTime.Now.AddDays(30), _fixture.DefaultKriteriji);
+
+                Assert.Single(service.GetSviTenderi());
+                Assert.Equal(1, novi.Id);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         //ZA potrebe task 4 JSON TESTOVI 

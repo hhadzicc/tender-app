@@ -14,7 +14,7 @@ namespace TenderiApp
     class Program
     {
         private static ITenderService tenderService = new TenderService();
-        private static IPonudaService ponudaService = new PonudaService();
+        private static IPonudaService ponudaService = new PonudaService(tenderService);
         private static IEvaluacijaService evaluacijaService = new EvaluacijaService();
         private static IIzvjestajService izvjestajService = new IzvjestajService();
 

@@ -9,13 +9,18 @@ namespace TenderiApp.Services
 {
     public class PonudaService : IPonudaService
     {
-        private List<Ponuda> ponude;
-        private int nextId;
+        private readonly ITenderService? tenderService;
+        private readonly List<Tender> tenderi = new List<Tender>();
 
-        public PonudaService()
+        public PonudaService(ITenderService? tenderService = null)
         {
-            ponude = new List<Ponuda>();
-            nextId = 1;
+            this.tenderService = tenderService;
+        }
+
+        private List<Ponuda> GetSvePonude()
+        {
+            var sviTenderi = tenderService?.GetSviTenderi() ?? tenderi;
+            return sviTenderi.SelectMany(t => t.Ponude).ToList();
         }
 
         public Ponuda PrijaviPonudu(Tender tender, Ponudjac ponudjac, double cijena, int rok, int garancija, int kvalitet)
@@ -40,14 +45,31 @@ namespace TenderiApp.Services
                 throw new TenderException("Rok za prijavu je istekao.");
             }
 
-            if (ponude.Any(p => p.TenderId == tender.Id && p.Ponudjac.Id == ponudjac.Id))
+            if (tenderService == null && !tenderi.Contains(tender))
+            {
+                tenderi.Add(tender);
+            }
+
+            var svePonude = GetSvePonude();
+            if (ponudjac.Id <= 0)
+            {
+                var postojeciPonudjac = svePonude.Select(p => p.Ponudjac)
+                    .FirstOrDefault(p => string.Equals(p.Email.Trim(), ponudjac.Email.Trim(), StringComparison.OrdinalIgnoreCase));
+                ponudjac.Id = postojeciPonudjac != null && postojeciPonudjac.Id > 0
+                    ? postojeciPonudjac.Id
+                    : svePonude.Select(p => p.Ponudjac.Id).DefaultIfEmpty(0).Max() + 1;
+            }
+
+            if (svePonude.Any(p => p.TenderId == tender.Id &&
+                (p.Ponudjac.Id == ponudjac.Id ||
+                 string.Equals(p.Ponudjac.Email.Trim(), ponudjac.Email.Trim(), StringComparison.OrdinalIgnoreCase))))
             {
                 throw new TenderException("Ponuđač je već prijavio ponudu za ovaj tender.");
             }
 
             Ponuda ponuda = new Ponuda(tender, ponudjac, cijena, rok, garancija, kvalitet)
             {
-                Id = nextId++
+                Id = svePonude.Select(p => p.Id).DefaultIfEmpty(0).Max() + 1
             };
 
             // INLINE kod iz ValidirajPonudu()
@@ -83,7 +105,6 @@ namespace TenderiApp.Services
 
             ponuda.JeValidna = validna;
 
-            ponude.Add(ponuda);
             tender.DodajPonudu(ponuda);
 
             return ponuda;
@@ -136,13 +157,13 @@ namespace TenderiApp.Services
 
         public List<Ponuda> GetPonudeZaTender(int tenderId)
         {
-            return ponude.Where(p => p.TenderId == tenderId).ToList();
+            return GetSvePonude().Where(p => p.TenderId == tenderId).ToList();
         }
 
         public List<Ponuda> FiltrirajPonude(int? tenderId = null, double? minCijena = null, double? maxCijena = null,
                                             int? maxRok = null, int? minKvalitet = null)
         {
-            var rezultat = ponude.AsQueryable();
+            var rezultat = GetSvePonude().AsQueryable();
 
             if (tenderId.HasValue)
             {
